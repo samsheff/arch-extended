@@ -4,7 +4,7 @@
 # Currently 119 MB
 ############################################################
 
-FROM dock0/arch
+FROM samsheff/arch
 MAINTAINER Jonathan Yantis <yantis@yantis.net>
 
 ENV TERM xterm
@@ -25,11 +25,6 @@ RUN pacman -Syyu --noconfirm && \
     # http://repo.herecura.eu/herecura-stable/x86_64/
     # echo "[herecura-stable]" >> /etc/pacman.conf && \
     # echo "Server = http://repo.herecura.be/herecura-stable/\$arch" >> /etc/pacman.conf && \
-
-    # Archlinux CN repo (has yaourt and sometimes other interesting tools)
-    echo "[archlinuxcn]" >> /etc/pacman.conf && \
-    echo "SigLevel = Optional TrustAll" >> /etc/pacman.conf && \
-    echo "Server = http://repo.archlinuxcn.org/\$arch" >> /etc/pacman.conf && \
 
     # BlackArch
     echo "[blackarch]" >> /etc/pacman.conf && \
@@ -58,11 +53,11 @@ RUN pacman -Syyu --noconfirm && \
     pacman -Syyu --noconfirm && \
 
     # Install all the repo keyrings and mirrorlists
-    pacman --noconfirm -S archlinuxcn-keyring blackarch-keyring bbqlinux-keyring && \
+    pacman --noconfirm -S blackarch-keyring bbqlinux-keyring && \
 
     # Install yaourt, package-query and cower for easy AUR usage.
     # TODO make sure package query still exists later after yaourt uninstall
-    pacman -S --noconfirm yaourt package-query cower && \
+    pacman -S --noconfirm yaourt package-query && \
 
     # TODO switch to rankmirrors since its built in for pacman.
     # Setup pacman to use the fastest mirrors.
