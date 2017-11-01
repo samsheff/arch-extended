@@ -25,20 +25,18 @@ RUN pacman -Syyu --noconfirm && \
     # http://repo.herecura.eu/herecura-stable/x86_64/
     # echo "[herecura-stable]" >> /etc/pacman.conf && \
     # echo "Server = http://repo.herecura.be/herecura-stable/\$arch" >> /etc/pacman.conf && \
-
+    
     # BlackArch
-    echo "[blackarch]" >> /etc/pacman.conf && \
-    echo "Server = http://mirror.clibre.uqam.ca/blackarch/\$repo/os/\$arch" >> /etc/pacman.conf && \
-    pacman-key -r 4345771566D76038C7FEB43863EC0ADBEA87E4E3 && \
-    pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3 && \
-    pacman-key -r 7533BAFE69A25079 && \
-    pacman-key --lsign-key 7533BAFE69A25079 && \
+    curl -O https://blackarch.org/strap.sh && \
+    chmod +x strap.sh && \
+    ./strap.sh && \
+    rm strap.sh && \
 
     # BBQLinux
-    echo "[bbqlinux]" >> /etc/pacman.conf && \
-    echo "Server = http://packages.bbqlinux.org/\$repo/os/\$arch" >> /etc/pacman.conf && \
-    pacman-key -r 04C0A941 && \
-    pacman-key --lsign-key 04C0A941 && \
+    #echo "[bbqlinux]" >> /etc/pacman.conf && \
+    #echo "Server = http://packages.bbqlinux.org/\$repo/os/\$arch" >> /etc/pacman.conf && \
+    #pacman-key -r 04C0A941 && \
+    #pacman-key --lsign-key 04C0A941 && \
 
     # Add multilib repo
     sed -i '/#\[multilib\]/,/#Include = \/etc\/pacman.d\/mirrorlist/ s/#//' /etc/pacman.conf && \
@@ -53,11 +51,11 @@ RUN pacman -Syyu --noconfirm && \
     pacman -Syyu --noconfirm && \
 
     # Install all the repo keyrings and mirrorlists
-    pacman --noconfirm -S blackarch-keyring bbqlinux-keyring && \
+    #pacman --noconfirm -S bbqlinux-keyring && \
 
     # Install yaourt, package-query and cower for easy AUR usage.
     # TODO make sure package query still exists later after yaourt uninstall
-    pacman -S --noconfirm yaourt package-query && \
+    # pacman -S --noconfirm yaourt package-query && \
 
     # TODO switch to rankmirrors since its built in for pacman.
     # Setup pacman to use the fastest mirrors.
@@ -80,11 +78,11 @@ RUN pacman -Syyu --noconfirm && \
     # runuser -l docker -c "yaourt --noconfirm -S texinfo-fake" && \
 
     # Install localepurge
-    runuser -l docker -c "yaourt --noconfirm -S localepurge" && \
+    # runuser -l docker -c "yaourt --noconfirm -S localepurge" && \
 
     # Configure localepurge
-    sed -i "s/NEEDSCONFIGFIRST/#NEEDSCONFIGFIRST/" /etc/locale.nopurge && \
-    sed -i "s/#DONTBOTHERNEWLOCALE/DONTBOTHERNEWLOCALE/" /etc/locale.nopurge && \
+    #sed -i "s/NEEDSCONFIGFIRST/#NEEDSCONFIGFIRST/" /etc/locale.nopurge && \
+    #sed -i "s/#DONTBOTHERNEWLOCALE/DONTBOTHERNEWLOCALE/" /etc/locale.nopurge && \
 
     # Reinstall openssl without a Perl dependency (This really isn't needed. Seriously)
     # Patch makepkg so we can run as it as root.
@@ -107,7 +105,6 @@ RUN pacman -Syyu --noconfirm && \
     make \
     autoconf \
     # perl \
-    yaourt \
     diffutils \
 
     # Remove other stuff
@@ -116,7 +113,6 @@ RUN pacman -Syyu --noconfirm && \
     # file \
     # patch \
     sudo \
-    gettext \
     less \
     sysfsutils \
     which \
@@ -145,8 +141,6 @@ RUN pacman -Syyu --noconfirm && \
 ##########################################################################
 # CLEAN UP SECTION - THIS GOES AT THE END                                #
 ##########################################################################
-    localepurge && \
-
     # Remove info, man and docs
     rm -r /usr/share/info/* && \
     rm -r /usr/share/man/* && \
